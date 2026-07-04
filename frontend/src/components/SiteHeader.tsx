@@ -1,4 +1,4 @@
-import { Compass, Github, Linkedin } from 'lucide-react';
+import { CircleUserRound, Github, Linkedin } from 'lucide-react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { siteConfig } from '@/config/site';
@@ -15,34 +15,23 @@ export function SiteHeader() {
         </span>
         {siteConfig.name}
       </RouterLink>
-      <div className="hidden items-center gap-4 text-ink-soft sm:flex">
-        <a
-          aria-label="Visit our GitHub repository"
-          className="transition-colors hover:text-ink"
-          href={siteConfig.links.github}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <Github size={20} />
-        </a>
-        <a
-          aria-label="Visit our LinkedIn page"
-          className="transition-colors hover:text-ink"
-          href={siteConfig.links.linkedin}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <Linkedin size={20} />
-        </a>
-        <a
-          aria-label="Visit my portfolio"
-          className="transition-colors hover:text-ink"
-          href={siteConfig.links.portfolio}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <Compass size={20} />
-        </a>
+      <div className="hidden items-center gap-2 sm:flex">
+        {[
+          { label: 'GitHub repository', href: siteConfig.links.github, Icon: Github },
+          { label: 'LinkedIn', href: siteConfig.links.linkedin, Icon: Linkedin },
+          { label: 'Portfolio', href: siteConfig.links.portfolio, Icon: CircleUserRound },
+        ].map(({ label, href, Icon }) => (
+          <a
+            key={label}
+            aria-label={label}
+            className="grid size-9 place-items-center rounded-full border border-line bg-paper-bright/90 text-ink-soft shadow-[0_6px_18px_-12px_rgba(26,26,31,0.5)] transition-colors hover:border-accent/40 hover:bg-paper-bright hover:text-accent-deep"
+            href={href}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <Icon size={17} />
+          </a>
+        ))}
       </div>
     </header>
   );
