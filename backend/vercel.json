@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/recommendations.go": {
+      "maxDuration": 30
+    }
+  }
+}
