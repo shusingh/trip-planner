@@ -6,6 +6,7 @@ import (
 
   "github.com/joho/godotenv"
   "github.com/shusingh/TripPlanner/backend/internal/config"
+  "github.com/shusingh/TripPlanner/backend/internal/ratelimit"
   "github.com/shusingh/TripPlanner/backend/internal/recommendations"
 )
 
@@ -38,10 +39,12 @@ func main() {
     log.Fatalf("failed to load config: %v", err)
   }
 
-  // Wrap the recommendations.Handler with our CORS middleware
+  // Wrap the recommendations.Handler with CORS and per-IP rate limiting.
+  // Rate limiting sits inside CORS so 429 responses still carry CORS headers.
+  limiter := ratelimit.New()
   http.Handle(
     "/api/recommendations",
-    corsMiddleware(http.HandlerFunc(recommendations.Handler)),
+    corsMiddleware(limiter.Middleware(http.HandlerFunc(recommendations.Handler))),
   )
 
   addr := ":" + cfg.Port

@@ -20,14 +20,14 @@ An intelligent full-stack web application that leverages AI to create personaliz
 - **Smart Trip Planning**
 
   - Multi-step intuitive form with progress tracking
-  - AI-powered personalized recommendations (via Groq with llama-3.1-8b-instant)
+  - AI-powered personalized recommendations (via Groq with llama-3.3-70b-versatile)
   - Interactive destination selection with map integration
 
 - **Modern Tech Architecture**
 
   - Type-safe frontend with React + TypeScript
   - High-performance Go backend
-  - AI integration via Groq (llama-3.1-8b-instant)
+  - AI integration via Groq (llama-3.3-70b-versatile)
   - Responsive UI with Hero UI components
 
 - **Production-Ready**
@@ -55,7 +55,7 @@ An intelligent full-stack web application that leverages AI to create personaliz
 - **Language:** [Go 1.18+](https://golang.org/)
 - **Web Framework:** Standard `net/http`
 - **Environment:** [godotenv](https://github.com/joho/godotenv)
-- **AI Service:** [Groq API](https://groq.com/) (llama-3.1-8b-instant)
+- **AI Service:** [Groq API](https://groq.com/) (llama-3.3-70b-versatile)
 
 #### Infrastructure
 

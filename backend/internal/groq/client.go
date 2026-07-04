@@ -11,7 +11,7 @@ import (
 
 const (
 	groqAPIEndpoint  = "https://api.groq.com/openai/v1/chat/completions"
-	defaultModelName = "llama-3.1-8b-instant"
+	defaultModelName = "llama-3.3-70b-versatile"
 )
 
 // modelName returns the Groq model to use, overridable via GROQ_MODEL so a
