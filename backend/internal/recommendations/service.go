@@ -42,9 +42,22 @@ func GetRecommendations(req models.RecommendationRequest) (models.Recommendation
 
 	// Parse the generated JSON into our response model
 	var resp models.RecommendationResponse
-	if err := json.Unmarshal([]byte(generated), &resp); err != nil {
+	if err := json.Unmarshal([]byte(stripCodeFences(generated)), &resp); err != nil {
 		return models.RecommendationResponse{}, fmt.Errorf("failed to parse AI output: %w", err)
 	}
 
 	return resp, nil
+}
+
+// stripCodeFences removes markdown code fences (```json ... ```) that some
+// models wrap around JSON output even when asked for raw JSON.
+func stripCodeFences(s string) string {
+	s = strings.TrimSpace(s)
+	if !strings.HasPrefix(s, "```") {
+		return s
+	}
+	s = strings.TrimPrefix(s, "```json")
+	s = strings.TrimPrefix(s, "```")
+	s = strings.TrimSuffix(strings.TrimSpace(s), "```")
+	return strings.TrimSpace(s)
 }

@@ -10,19 +10,34 @@ import (
 )
 
 const (
-	groqAPIEndpoint = "https://api.groq.com/openai/v1/chat/completions"
-	modelName       = "gemma2-9b-it"
+	groqAPIEndpoint  = "https://api.groq.com/openai/v1/chat/completions"
+	defaultModelName = "llama-3.1-8b-instant"
 )
+
+// modelName returns the Groq model to use, overridable via GROQ_MODEL so a
+// decommissioned model can be swapped without a code change.
+func modelName() string {
+	if m := os.Getenv("GROQ_MODEL"); m != "" {
+		return m
+	}
+	return defaultModelName
+}
 
 // APIRequest represents the request payload for the Groq API.
 type APIRequest struct {
-	Messages    []Message              `json:"messages"`
-	Model       string                 `json:"model"`
-	Temperature float64                `json:"temperature,omitempty"`
-	MaxTokens   int                    `json:"max_tokens,omitempty"`
-	TopP        float64                `json:"top_p,omitempty"`
-	Stop        []string               `json:"stop,omitempty"`
-	Stream      bool                   `json:"stream,omitempty"`
+	Messages       []Message       `json:"messages"`
+	Model          string          `json:"model"`
+	Temperature    float64         `json:"temperature,omitempty"`
+	MaxTokens      int             `json:"max_tokens,omitempty"`
+	TopP           float64         `json:"top_p,omitempty"`
+	Stop           []string        `json:"stop,omitempty"`
+	Stream         bool            `json:"stream,omitempty"`
+	ResponseFormat *ResponseFormat `json:"response_format,omitempty"`
+}
+
+// ResponseFormat requests structured output from the API.
+type ResponseFormat struct {
+	Type string `json:"type"`
 }
 
 // Message represents a single message in the chat.
@@ -66,9 +81,10 @@ func QueryGroq(prompt string) (string, error) {
 		Messages: []Message{
 			{Role: "user", Content: prompt},
 		},
-		Model:       modelName,
-		Temperature: 0.7,
-		MaxTokens:   2000, // Corresponds to max_new_tokens in HF
+		Model:          modelName(),
+		Temperature:    0.7,
+		MaxTokens:      2000, // Corresponds to max_new_tokens in HF
+		ResponseFormat: &ResponseFormat{Type: "json_object"},
 	}
 
 	bodyBytes, err := json.Marshal(reqBody)
