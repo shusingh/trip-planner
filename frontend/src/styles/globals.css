@@ -3,5 +3,21 @@
 @tailwind utilities;
 
 body {
-  @apply bg-paper font-sans text-ink;
+  @apply bg-paper font-sans text-ink antialiased;
+  /* Base paper fill; the live WebGL PaperShader canvas (fixed, behind content)
+     paints the computed washi fibre on top of this. */
+  background: #efeae0;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* While the kentō cursor is active, its ink dot IS the pointer. Touch and
+   reduced-motion sessions never get this class and keep the native cursor. */
+html.kento-cursor,
+html.kento-cursor * {
+  cursor: none !important;
 }

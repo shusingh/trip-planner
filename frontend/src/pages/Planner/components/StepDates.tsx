@@ -10,7 +10,7 @@ export interface StepDatesProps {
 export default function StepDates({ dateRange, onChange }: StepDatesProps) {
   return (
     <div className="space-y-4">
-      <h2 className="font-serif text-3xl font-semibold tracking-tight">
+      <h2 className="font-serif text-3xl font-medium tracking-tight">
         When will you travel?
       </h2>
       <DateRangeField range={dateRange} onChange={onChange} />

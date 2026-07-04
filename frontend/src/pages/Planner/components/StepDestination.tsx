@@ -59,7 +59,7 @@ export default function StepDestination({
 
   return (
     <div className="space-y-4">
-      <h2 className="font-serif text-3xl font-semibold tracking-tight">
+      <h2 className="font-serif text-3xl font-medium tracking-tight">
         Where do you want to go?
       </h2>
       <div className="relative">
@@ -73,7 +73,7 @@ export default function StepDestination({
           onFocus={() => suggestions.length > 0 && setOpen(true)}
         />
         {open && suggestions.length > 0 && (
-          <ul className="absolute z-10 mt-1.5 w-full overflow-hidden rounded-xl border border-line bg-white shadow-lg">
+          <ul className="absolute z-10 mt-1.5 w-full overflow-hidden rounded-lg border border-line bg-paper-bright shadow-[0_18px_38px_-18px_rgba(26,26,31,0.24)]">
             {suggestions.map((s, i) => (
               <li key={`${s.label}-${i}`}>
                 <button

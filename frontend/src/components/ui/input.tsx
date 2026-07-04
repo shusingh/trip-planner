@@ -11,8 +11,8 @@ export interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Field = forwardRef<HTMLInputElement, FieldProps>(
   ({ label, startContent, className, ...props }, ref) => (
-    <div className="rounded-xl border-[1.5px] border-line bg-white px-4 py-3 transition-colors focus-within:border-accent-deep">
-      <label className="mb-0.5 block text-[11px] font-semibold uppercase tracking-wider text-ink-soft">
+    <div className="rounded-lg border border-line bg-paper-bright/80 px-4 py-3 shadow-[0_16px_34px_-30px_rgba(26,26,31,0.38)] transition-colors focus-within:border-accent-deep">
+      <label className="mb-0.5 block font-mono text-[11px] font-semibold uppercase tracking-wider text-accent-deep">
         {label}
       </label>
       <div className="flex items-center gap-2">

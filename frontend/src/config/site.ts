@@ -1,8 +1,9 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: 'AI Trip Planner',
-  description: 'AI‑driven recommendations for your dream adventure.',
+  name: 'Michi',
+  description:
+    'Calm AI itineraries you can read, refine, and explore on a living map.',
   navItems: [
     {
       label: 'Home',

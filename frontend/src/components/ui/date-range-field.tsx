@@ -15,9 +15,9 @@ export interface DateRangeFieldProps {
 // per-day classNames; overriding classNames instead breaks the built-in
 // gradient that joins range_start/range_end into the range_middle fill.
 const rdpVars = {
-  '--rdp-accent-color': '#1d3557',
-  '--rdp-accent-background-color': '#e7ecf2',
-  '--rdp-today-color': '#e07a3f',
+  '--rdp-accent-color': '#435f1d',
+  '--rdp-accent-background-color': 'rgba(86, 122, 38, 0.12)',
+  '--rdp-today-color': '#567a26',
 } as CSSProperties;
 
 // The `classNames` prop replaces each key's default class outright rather
@@ -31,7 +31,7 @@ export function DateRangeField({ range, onChange }: DateRangeFieldProps) {
   today.setHours(0, 0, 0, 0);
 
   return (
-    <div className="rounded-xl border-[1.5px] border-line bg-white p-3">
+    <div className="rounded-lg border border-line bg-paper-bright/80 p-3 shadow-[0_16px_34px_-30px_rgba(26,26,31,0.38)]">
       <DayPicker
         classNames={{
           day_button: cn(

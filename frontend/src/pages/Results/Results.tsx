@@ -3,10 +3,10 @@ import type { AtlasMarker, AtlasMapHandle } from '@/components/AtlasMap';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, Navigate, Link as RouterLink } from 'react-router-dom';
-import { ExternalLink } from 'lucide-react';
 
 import { AtlasShell } from '@/layouts/atlas-shell';
 import { buttonVariants } from '@/components/ui/button';
+import { PlaceCard } from './components/PlaceCard';
 import { cn } from '@/lib/utils';
 
 interface LocationState {
@@ -15,9 +15,9 @@ interface LocationState {
 }
 
 const CATEGORIES: { key: 'attractions' | 'food' | 'other'; label: string; color: string }[] = [
-  { key: 'attractions', label: 'Attractions', color: '#e07a3f' },
+  { key: 'attractions', label: 'Attractions', color: '#567a26' },
   { key: 'food', label: 'Food', color: '#2f7d5c' },
-  { key: 'other', label: 'Local finds', color: '#1d3557' },
+  { key: 'other', label: 'Local finds', color: '#1a1a1f' },
 ];
 
 export default function ResultsPage() {
@@ -77,35 +77,46 @@ export default function ResultsPage() {
       ref={mapRef}
       panelHeader={
         <div>
-          <div className="text-xs font-semibold uppercase tracking-widest text-accent">
+          <div className="font-mono text-xs font-semibold uppercase tracking-widest text-accent">
             Your itinerary sketch
           </div>
-          <h1 className="mt-1 font-serif text-2xl font-semibold">
+          <h1 className="mt-1 font-serif text-2xl font-medium">
             {state.destination}
           </h1>
         </div>
       }
       showVeil={false}
+      centerContent={false}
     >
-      <div className="-mx-7 -mt-8 mb-4 flex gap-2 border-b border-line px-7 pb-3">
-        {CATEGORIES.map(({ key, label }) => (
-          <button
-            key={key}
-            className={cn(
-              'rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors',
-              activeCat === key
-                ? 'bg-accent-deep/10 text-accent-deep'
-                : 'text-ink-soft hover:text-ink'
-            )}
-            type="button"
-            onClick={() => setActiveCat(key)}
-          >
-            {label}
-          </button>
-        ))}
+      <div className="-mx-7 -mt-2 mb-6 flex gap-6 border-b border-line px-7">
+        {CATEGORIES.map(({ key, label }) => {
+          const count = (groups[key] || []).length;
+          return (
+            <button
+              key={key}
+              className={cn(
+                '-mb-px border-b-2 pb-3 pt-1 text-sm font-semibold transition-colors',
+                activeCat === key
+                  ? 'border-accent text-accent-deep'
+                  : 'border-transparent text-ink-soft hover:text-ink'
+              )}
+              type="button"
+              onClick={() => setActiveCat(key)}
+            >
+              {label}
+              {count > 0 && (
+                <span className="ml-1.5 font-mono text-[11px] text-ink-muted">
+                  {count}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      <div className="space-y-2">
+      {/* Keying on the active category remounts the list so cards replay their
+          staggered entrance when you switch tabs. */}
+      <div key={activeCat} className="space-y-2">
         {activePlaces.length === 0 && (
           <p className="text-sm text-ink-soft">Nothing here yet.</p>
         )}
@@ -114,40 +125,14 @@ export default function ResultsPage() {
           const color = CATEGORIES.find((c) => c.key === activeCat)!.color;
 
           return (
-            <div
+            <PlaceCard
               key={id}
-              className={cn(
-                'flex cursor-pointer gap-3 rounded-2xl p-3 transition-colors hover:bg-paper',
-                activeId === id && 'bg-paper'
-              )}
-              role="button"
-              tabIndex={0}
-              onClick={() => handleCardClick(activeCat, i)}
-            >
-              <div
-                className="mt-0.5 flex h-7 w-7 flex-none items-center justify-center rounded-full text-xs font-bold text-white"
-                style={{ background: color }}
-              >
-                {i + 1}
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold">{place.name}</h3>
-                <p className="mt-0.5 text-[13.5px] leading-relaxed text-ink-soft">
-                  {place.description}
-                </p>
-                {place.url && (
-                  <a
-                    className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-accent-deep hover:underline"
-                    href={place.url}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    Learn more <ExternalLink size={12} />
-                  </a>
-                )}
-              </div>
-            </div>
+              active={activeId === id}
+              color={color}
+              index={i}
+              place={place}
+              onSelect={() => handleCardClick(activeCat, i)}
+            />
           );
         })}
       </div>

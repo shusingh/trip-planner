@@ -3,11 +3,12 @@ import type { DateRange } from 'react-day-picker';
 import { useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { format } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import StepDestination from './components/StepDestination';
 import StepDates from './components/StepDates';
-import StepInterests from './components/StepInterests';
+import StepInterests, { type Pace } from './components/StepInterests';
+import { StepTracker } from './components/StepTracker';
 
 import { LoadingSequence } from '@/components/LoadingSequence';
 import { buttonVariants } from '@/components/ui/button';
@@ -29,28 +30,38 @@ export default function PlannerPage() {
   } | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [tags, setTags] = useState<string[]>([]);
+  const [pace, setPace] = useState<Pace>('balanced');
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isStepValid =
-    step === 1
-      ? destination.trim().length > 0
-      : step === 2
-        ? !!(dateRange?.from && dateRange?.to)
-        : tags.length > 0;
+  // Per-step completion, in order (index 0 = step 1). Drives both the Next
+  // button and which steps the tracker will let you jump to.
+  const stepCompletion = [
+    destination.trim().length > 0,
+    !!(dateRange?.from && dateRange?.to),
+    tags.length > 0,
+  ];
+  const isStepValid = stepCompletion[step - 1];
 
   const handleNext = () => {
     if (isStepValid) setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   };
   const handleBack = () => setStep((s) => Math.max(s - 1, 1));
+  // Jumping is only offered for reachable steps (every earlier step complete),
+  // so this guard mirrors the tracker's own gating.
+  const handleJump = (target: number) => {
+    if (stepCompletion.slice(0, target - 1).every(Boolean)) setStep(target);
+  };
   const toggleTag = (label: string) =>
     setTags((cur) =>
       cur.includes(label) ? cur.filter((t) => t !== label) : [...cur, label]
     );
+  const addCustomTag = (label: string) =>
+    setTags((cur) => (cur.includes(label) ? cur : [...cur, label]));
 
   const handleSelectCoords = (coords: { lat: number; lng: number }) => {
     setDestinationCoords(coords);
-    mapRef.current?.flyTo([coords.lng, coords.lat], 9);
+    mapRef.current?.flyTo([coords.lng, coords.lat], 14.4);
   };
 
   const handleSubmit = async () => {
@@ -65,6 +76,7 @@ export default function PlannerPage() {
         startDate: format(dateRange.from, 'yyyy-MM-dd'),
         endDate: format(dateRange.to, 'yyyy-MM-dd'),
         tags,
+        pace,
       };
 
       const base = import.meta.env.VITE_API_BASE_URL || '';
@@ -115,21 +127,23 @@ export default function PlannerPage() {
     <AtlasShell
       ref={mapRef}
       panelHeader={
-        <div className="flex items-center justify-between">
-          <span className="font-serif text-lg font-bold tracking-tight">
-            Trip<span className="text-accent">Atlas</span>
-          </span>
-          <div className="flex gap-1.5">
-            {[1, 2, 3].map((n) => (
-              <span
-                key={n}
-                className={cn(
-                  'h-1 w-5 rounded-full transition-colors',
-                  n <= step ? 'bg-accent-deep' : 'bg-line'
-                )}
-              />
-            ))}
-          </div>
+        <div>
+          <RouterLink
+            aria-label="Michi home"
+            className="flex w-fit items-center gap-2.5 font-serif text-[22px] font-medium tracking-tight"
+            to="/"
+          >
+            <span className="grid size-6 place-items-center rounded-full border border-ink/15 bg-[conic-gradient(from_45deg,#567a26,#2f7d5c,#ded5c5,#567a26)] shadow-[inset_0_0_0_4px_rgba(248,244,236,0.55)]">
+              <span className="size-2 rounded-full bg-paper-bright" />
+            </span>
+            Michi
+          </RouterLink>
+          <StepTracker
+            completed={stepCompletion}
+            current={step}
+            steps={['Destination', 'Dates', 'Interests']}
+            onJump={handleJump}
+          />
         </div>
       }
       showVeil={!destinationCoords}
@@ -155,7 +169,13 @@ export default function PlannerPage() {
             <StepDates dateRange={dateRange} onChange={setDateRange} />
           )}
           {step === 3 && (
-            <StepInterests selectedTags={tags} onToggleTag={toggleTag} />
+            <StepInterests
+              pace={pace}
+              selectedTags={tags}
+              onAddCustom={addCustomTag}
+              onPaceChange={setPace}
+              onToggleTag={toggleTag}
+            />
           )}
 
           <div className="mt-8 flex items-center justify-between">

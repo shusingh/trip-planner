@@ -1,0 +1,64 @@
+/* Four registration brackets and a fine ink dot, JS-positioned each frame.
+   Colors mirror the app tokens: ink (#1a1a1f) at rest, matcha (#567a26) hot. */
+
+.corner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 11px;
+  height: 11px;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: multiply;
+  will-change: transform;
+  transition: opacity 0.25s ease;
+}
+
+.corner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 0 solid color-mix(in srgb, #1a1a1f 80%, transparent);
+  transition: border-color 0.2s ease;
+}
+
+.cornerNw::before {
+  border-top-width: 1.5px;
+  border-left-width: 1.5px;
+}
+
+.cornerNe::before {
+  border-top-width: 1.5px;
+  border-right-width: 1.5px;
+}
+
+.cornerSw::before {
+  border-bottom-width: 1.5px;
+  border-left-width: 1.5px;
+}
+
+.cornerSe::before {
+  border-bottom-width: 1.5px;
+  border-right-width: 1.5px;
+}
+
+.cornerHot::before {
+  border-color: #567a26;
+}
+
+.cursorDot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 999px;
+  background: #1a1a1f;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: multiply;
+  will-change: transform;
+  transition: opacity 0.2s ease;
+}

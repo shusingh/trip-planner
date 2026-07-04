@@ -28,6 +28,8 @@ export interface AtlasMapProps {
   className?: string;
   initialCenter?: [number, number];
   initialZoom?: number;
+  initialPitch?: number;
+  initialBearing?: number;
   onMarkerClick?: (id: string) => void;
 }
 
@@ -35,8 +37,10 @@ export const AtlasMap = forwardRef<AtlasMapHandle, AtlasMapProps>(
   (
     {
       className,
-      initialCenter = [15, 25],
-      initialZoom = 1.6,
+      initialCenter = [135.7681, 35.0116],
+      initialZoom = 14.8,
+      initialPitch = 48,
+      initialBearing = -18,
       onMarkerClick,
     },
     ref
@@ -53,11 +57,57 @@ export const AtlasMap = forwardRef<AtlasMapHandle, AtlasMapProps>(
         style: MAP_STYLE,
         center: initialCenter,
         zoom: initialZoom,
+        pitch: initialPitch,
+        bearing: initialBearing,
         attributionControl: false,
       });
 
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
       mapRef.current = map;
+
+      map.on('load', () => {
+        ['poi_label', 'place_label_other', 'place_label_city', 'road_label'].forEach((id) => {
+          if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'none');
+        });
+
+        const labelLayerId = map
+          .getStyle()
+          .layers?.find(
+            (layer) =>
+              layer.type === 'symbol' &&
+              layer.layout &&
+              'text-field' in layer.layout
+          )?.id;
+
+        if (map.getSource('openmaptiles') && !map.getLayer('michi-3d-buildings')) {
+          map.addLayer(
+            {
+              id: 'michi-3d-buildings',
+              source: 'openmaptiles',
+              'source-layer': 'building',
+              type: 'fill-extrusion',
+              minzoom: 13,
+              paint: {
+                'fill-extrusion-color': [
+                  'interpolate',
+                  ['linear'],
+                  ['coalesce', ['get', 'render_height'], 8],
+                  0,
+                  '#d8d0c0',
+                  50,
+                  '#9aa077',
+                  150,
+                  '#496b31',
+                ],
+                'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 8],
+                'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
+                'fill-extrusion-opacity': 0.78,
+              },
+            },
+            labelLayerId
+          );
+        }
+      });
 
       // SPA route transitions can leave the canvas sized from a stale layout
       // pass; keep it in sync with its container explicitly.
@@ -72,9 +122,19 @@ export const AtlasMap = forwardRef<AtlasMapHandle, AtlasMapProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Only one popup should be open at a time; close any others (optionally
+    // sparing the one being opened) before showing a new one.
+    const closeAllPopups = (exceptId?: string) => {
+      markersRef.current.forEach((marker, id) => {
+        if (exceptId && id === exceptId) return;
+        const popup = marker.getPopup();
+        if (popup && popup.isOpen()) popup.remove();
+      });
+    };
+
     useImperativeHandle(ref, () => ({
       flyTo(center, zoom = 10) {
-        mapRef.current?.flyTo({ center, zoom, duration: 2000 });
+        mapRef.current?.flyTo({ center, zoom, pitch: 62, bearing: -28, duration: 2000 });
       },
       setMarkers(markers) {
         markersRef.current.forEach((m) => m.remove());
@@ -101,10 +161,15 @@ export const AtlasMap = forwardRef<AtlasMapHandle, AtlasMapProps>(
             num.textContent = place.label;
             num.style.transform = 'rotate(45deg)';
             num.style.color = '#fff';
-            num.style.font = '700 12px Inter, sans-serif';
+            num.style.font = '700 12px Hanken Grotesk, sans-serif';
             el.appendChild(num);
 
-            el.addEventListener('click', () => onMarkerClick?.(place.id));
+            el.addEventListener('click', () => {
+              // MapLibre toggles this marker's own popup; make sure every
+              // other popup closes so only one stays open.
+              closeAllPopups(place.id);
+              onMarkerClick?.(place.id);
+            });
 
             const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
               .setLngLat([place.lng, place.lat])
@@ -125,16 +190,37 @@ export const AtlasMap = forwardRef<AtlasMapHandle, AtlasMapProps>(
 
         const bounds = new maplibregl.LngLatBounds();
         markers.forEach((m) => bounds.extend([m.lng, m.lat]));
-        map.fitBounds(bounds, { padding: 80, duration: 1600, maxZoom: 14 });
+
+        // Pitch and bearing must ride along in the same fitBounds call; a
+        // separate easeTo afterwards starts a second camera animation from the
+        // pre-fit position and cancels the pan, stranding the map on its
+        // initial center (the "results are Paris but the map shows Kyoto" bug).
+        const frame = () =>
+          map.fitBounds(bounds, {
+            padding: 80,
+            maxZoom: 14,
+            pitch: 62,
+            bearing: -28,
+            duration: 1600,
+          });
+
+        // A freshly mounted map may not have its style ready yet; a fitBounds
+        // issued before load can be dropped, so defer until it is.
+        if (map.loaded()) frame();
+        else map.once('load', frame);
       },
       focusMarker(id) {
         const map = mapRef.current;
         const marker = markersRef.current.get(id);
         if (!map || !marker) return;
 
+        closeAllPopups();
         const lngLat = marker.getLngLat();
-        map.flyTo({ center: lngLat, zoom: 14, duration: 1100 });
-        setTimeout(() => marker.togglePopup(), 1100);
+        map.flyTo({ center: lngLat, zoom: 14, pitch: 66, bearing: -28, duration: 1100 });
+        setTimeout(() => {
+          const popup = marker.getPopup();
+          if (popup && !popup.isOpen()) marker.togglePopup();
+        }, 1100);
       },
     }));
 
