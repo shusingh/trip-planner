@@ -1,24 +1,19 @@
-import type { RangeValue } from '@react-types/shared';
-import type { DateValue } from '@react-types/datepicker';
+import type { DateRange } from 'react-day-picker';
 
-import { DateRangePicker } from '@heroui/react';
-import { parseDate } from '@internationalized/date';
+import { DateRangeField } from '@/components/ui/date-range-field';
 
 export interface StepDatesProps {
-  dateRange: RangeValue<DateValue> | null;
-  onChange: (range: RangeValue<DateValue> | null) => void;
+  dateRange: DateRange | undefined;
+  onChange: (range: DateRange | undefined) => void;
 }
 
 export default function StepDates({ dateRange, onChange }: StepDatesProps) {
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">When will you travel?</h2>
-      <DateRangePicker
-        label="Travel Period"
-        minValue={parseDate(new Date().toISOString().split('T')[0])}
-        value={dateRange}
-        onChange={onChange}
-      />
+      <h2 className="font-serif text-3xl font-semibold tracking-tight">
+        When will you travel?
+      </h2>
+      <DateRangeField range={dateRange} onChange={onChange} />
     </div>
   );
 }

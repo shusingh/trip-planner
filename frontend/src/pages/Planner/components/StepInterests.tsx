@@ -1,5 +1,16 @@
-import { Chip } from '@heroui/react';
-import { Icon } from '@iconify/react';
+import {
+  Map,
+  Utensils,
+  Star,
+  Moon,
+  BookOpen,
+  Trees,
+  Mountain,
+  Landmark,
+  ShoppingBag,
+} from 'lucide-react';
+
+import { Chip } from '@/components/ui/chip';
 
 export interface StepInterestsProps {
   selectedTags: string[];
@@ -7,15 +18,15 @@ export interface StepInterestsProps {
 }
 
 const TAGS = [
-  { label: 'Must‑see Attractions', icon: 'lucide:map' },
-  { label: 'Great Food', icon: 'lucide:utensils' },
-  { label: 'Hidden Gems', icon: 'lucide:star' },
-  { label: 'Nightlife', icon: 'lucide:moon' },
-  { label: 'History', icon: 'lucide:book' },
-  { label: 'Nature', icon: 'lucide:tree' },
-  { label: 'Adventure', icon: 'lucide:mountain' },
-  { label: 'Culture', icon: 'lucide:landmark' },
-  { label: 'Shopping', icon: 'lucide:shopping-bag' },
+  { label: 'Must-see Attractions', Icon: Map },
+  { label: 'Great Food', Icon: Utensils },
+  { label: 'Hidden Gems', Icon: Star },
+  { label: 'Nightlife', Icon: Moon },
+  { label: 'History', Icon: BookOpen },
+  { label: 'Nature', Icon: Trees },
+  { label: 'Adventure', Icon: Mountain },
+  { label: 'Culture', Icon: Landmark },
+  { label: 'Shopping', Icon: ShoppingBag },
 ];
 
 export default function StepInterests({
@@ -24,24 +35,20 @@ export default function StepInterests({
 }: StepInterestsProps) {
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Select your interests</h2>
+      <h2 className="font-serif text-3xl font-semibold tracking-tight">
+        Select your interests
+      </h2>
       <div className="flex flex-wrap gap-3">
-        {TAGS.map(({ label, icon }) => {
-          const isSelected = selectedTags.includes(label);
-
-          return (
-            <Chip
-              key={label}
-              className="cursor-pointer px-4 py-5 text-base"
-              color={isSelected ? 'primary' : 'default'}
-              startContent={<Icon icon={icon} />}
-              variant={isSelected ? 'solid' : 'bordered'}
-              onClick={() => onToggleTag(label)}
-            >
-              {label}
-            </Chip>
-          );
-        })}
+        {TAGS.map(({ label, Icon }) => (
+          <Chip
+            key={label}
+            icon={<Icon size={16} />}
+            selected={selectedTags.includes(label)}
+            onClick={() => onToggleTag(label)}
+          >
+            {label}
+          </Chip>
+        ))}
       </div>
     </div>
   );

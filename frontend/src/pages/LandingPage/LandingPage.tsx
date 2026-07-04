@@ -1,50 +1,31 @@
-import { Link } from '@heroui/link';
-import { Snippet } from '@heroui/snippet';
-import { Code } from '@heroui/code';
-import { button } from '@heroui/theme';
+import { Link as RouterLink } from 'react-router-dom';
 
-import { siteConfig } from '@/config/site';
-import { title, subtitle } from '@/components/primitives';
-import DefaultLayout from '@/layouts/default';
 import { GlobeAnimation } from '@/components/GlobeAnimation';
+import { buttonVariants } from '@/components/ui/button';
+import { siteConfig } from '@/config/site';
+import DefaultLayout from '@/layouts/default';
 
 export default function LandingPage() {
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-        <div className="inline-block max-w-lg justify-center text-center">
-          <span className={title()}>Plan Your&nbsp;</span>
-          <span className={title({ color: 'violet' })}>Perfect Trip&nbsp;</span>
+      <section className="flex flex-col items-center justify-center gap-6 py-16 text-center md:py-24">
+        <h1 className="max-w-2xl font-serif text-5xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
+          Plan your <span className="italic text-accent">perfect trip</span>
           <br />
-          <span className={title()}>With AI</span>
-          <div className={subtitle({ class: 'mt-4' })}>
-            {siteConfig.description}
-          </div>
-        </div>
+          with AI
+        </h1>
+        <p className="max-w-md text-lg text-ink-soft">
+          {siteConfig.description}
+        </p>
 
-        <div className="flex gap-3">
-          <Link
-            aria-label="Start planning your trip"
-            className={button({
-              color: 'primary',
-              variant: 'shadow',
-              radius: 'full',
-              class: `inline-flex transform-gpu items-center gap-2 px-6 py-3 antialiased transition duration-200 will-change-transform hover:scale-105 active:scale-95`,
-            })}
-            href="/planner"
-          >
-            <GlobeAnimation className="inline-block" size={24} />
-            <span className="font-medium">Start</span>
-          </Link>
-        </div>
-
-        <div className="mt-8">
-          <Snippet hideCopyButton hideSymbol variant="bordered">
-            <span>
-              Get started by clicking <Code color="primary">Start</Code>
-            </span>
-          </Snippet>
-        </div>
+        <RouterLink
+          aria-label="Start planning your trip"
+          className={buttonVariants({ variant: 'primary', size: 'md' })}
+          to="/planner"
+        >
+          <GlobeAnimation size={22} />
+          Start
+        </RouterLink>
       </section>
     </DefaultLayout>
   );

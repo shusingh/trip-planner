@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trip Planner — Redesign Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #12151c; color: #f2efe8; min-height: 100vh; padding: 8vh 6vw; }
+  .kicker { font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #8b93a5; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(34px, 5vw, 58px); font-weight: 800; letter-spacing: -0.02em; margin: 14px 0 10px; }
+  .sub { color: #8b93a5; max-width: 60ch; line-height: 1.6; margin-bottom: 6vh; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  a.card { display: block; text-decoration: none; color: inherit; border: 1px solid #2a2f3a; border-radius: 18px; padding: 30px 28px; transition: all .2s; background: #171b24; }
+  a.card:hover { transform: translateY(-4px); border-color: #4a5468; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; margin-bottom: 18px; }
+  .a .tag { background: rgba(224,122,63,.15); color: #e07a3f; }
+  .b .tag { background: rgba(183,70,44,.15); color: #d9705a; }
+  .c .tag { background: rgba(80,80,240,.18); color: #8f8fff; }
+  h2 { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; margin-bottom: 10px; }
+  p { color: #a7adbc; font-size: 14.5px; line-height: 1.6; }
+  .go { display: inline-block; margin-top: 20px; font-weight: 600; font-size: 14px; color: #f2efe8; }
+</style>
+</head>
+<body>
+  <div class="kicker">Trip Planner · Redesign concepts · July 2026</div>
+  <h1>Three directions, one trip.</h1>
+  <p class="sub">Each mock is fully interactive: walk the wizard from landing to results with sample Tokyo data. Loading states are simulated so you can judge the waiting experience too. Pick the one that feels right, sir.</p>
+  <div class="grid">
+    <a class="card a" href="atlas.html">
+      <span class="tag">Concept A · Recommended</span>
+      <h2>Atlas</h2>
+      <p>Map-first split screen. The map is alive from the first keystroke; results land as pins with a synced card rail. Turns your lat/long data into the star of the show.</p>
+      <span class="go">Open mock →</span>
+    </a>
+    <a class="card b" href="boarding-pass.html">
+      <span class="tag">Concept B</span>
+      <h2>Boarding Pass</h2>
+      <p>The wizard is a ticket being filled in; interests are passport stamps; results arrive as an approved itinerary folio with luggage-tag cards. Charming and distinctive.</p>
+      <span class="go">Open mock →</span>
+    </a>
+    <a class="card c" href="editorial.html">
+      <span class="tag">Concept C</span>
+      <h2>Editorial</h2>
+      <p>A travel-magazine issue about your trip. The wizard reads as a fill-in-the-blanks interview; results are typeset dispatches from "correspondents". Big type, confident.</p>
+      <span class="go">Open mock →</span>
+    </a>
+  </div>
+</body>
+</html>
