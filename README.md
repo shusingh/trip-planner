@@ -1,6 +1,6 @@
 # 🌍 AI Trip Planner
 
-An intelligent full-stack web application that leverages AI to create personalized travel itineraries. Simply input your destination, travel dates, and interests to receive AI-powered recommendations for attractions, restaurants, activities, and more through the Groq API.
+An intelligent full-stack web application that leverages AI to create personalized travel itineraries. Simply input your destination, travel dates, and interests to receive AI-powered recommendations for attractions, restaurants, activities, and more, plotted on a live map, through the Groq API.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Go](https://img.shields.io/badge/Go-1.18+-00ADD8?logo=go)](https://golang.org/doc/install)
@@ -11,7 +11,8 @@ An intelligent full-stack web application that leverages AI to create personaliz
 
 ### 🌟 Quick Links
 
-- **Live Demo:** [TripPlanner Website](https://tripplannerwebsite.onrender.com)
+- **Live Demo:** [Atlas Trip Planner](https://atlas-trip-planner.vercel.app)
+- **API:** [atlas-trip-planner-api.vercel.app](https://atlas-trip-planner-api.vercel.app)
 
 ---
 
@@ -21,19 +22,19 @@ An intelligent full-stack web application that leverages AI to create personaliz
 
   - Multi-step intuitive form with progress tracking
   - AI-powered personalized recommendations (via Groq with llama-3.3-70b-versatile)
-  - Interactive destination selection with map integration
+  - Map-first layout: recommendations render live on a MapLibre GL map as you plan
 
 - **Modern Tech Architecture**
 
   - Type-safe frontend with React + TypeScript
-  - High-performance Go backend
+  - Go backend deployed as Vercel serverless functions
   - AI integration via Groq (llama-3.3-70b-versatile)
-  - Responsive UI with Hero UI components
+  - Local, dependency-light UI components (no external component library)
 
 - **Production-Ready**
   - Comprehensive error handling
   - Client-side routing with fallback support
-  - Optimized deployment configuration
+  - Per-IP rate limiting on the recommendations endpoint
   - Environment-based configuration
 
 ---
@@ -44,11 +45,11 @@ An intelligent full-stack web application that leverages AI to create personaliz
 
 - **Core:** [React 18](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/)
 - **Build Tool:** [Vite](https://vitejs.dev/)
-- **UI Framework:** [Hero UI](https://heroicons.com/)
+- **UI:** Local shadcn-style components (button, input, chip, date range field)
 - **Routing:** [React Router](https://reactrouter.com/)
-- **Styling:** [TailwindCSS](https://tailwindcss.com/)
-- **Maps:** [Leaflet](https://leafletjs.com/)
-- **Icons:** [Iconify](https://iconify.design/)
+- **Styling:** [TailwindCSS](https://tailwindcss.com/) v3
+- **Maps:** [MapLibre GL JS](https://maplibre.org/) + [OpenFreeMap](https://openfreemap.org/) (keyless vector tiles)
+- **Geocoding:** [Photon](https://photon.komoot.io/)
 
 #### Backend
 
@@ -56,13 +57,14 @@ An intelligent full-stack web application that leverages AI to create personaliz
 - **Web Framework:** Standard `net/http`
 - **Environment:** [godotenv](https://github.com/joho/godotenv)
 - **AI Service:** [Groq API](https://groq.com/) (llama-3.3-70b-versatile)
+- **Rate Limiting:** per-IP token bucket via `golang.org/x/time/rate`
 
 #### Infrastructure
 
-- **Hosting:** [Render.com](https://render.com/)
-  - Frontend: Static Site Hosting
-  - Backend: Private Service
-- **CI/CD:** Automated deployments via Render
+- **Hosting:** [Vercel](https://vercel.com/)
+  - Frontend: static Vite build (project root: `frontend/`)
+  - Backend: Go serverless function (project root: `backend/`)
+- **CI/CD:** deployed via the Vercel CLI
 
 ---
 
@@ -80,8 +82,8 @@ An intelligent full-stack web application that leverages AI to create personaliz
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/shusingh/TripPlanner.git
-   cd TripPlanner
+   git clone https://github.com/shusingh/trip-planner.git
+   cd trip-planner
    ```
 
 2. **Backend Setup**
@@ -117,53 +119,65 @@ An intelligent full-stack web application that leverages AI to create personaliz
 
 ### 📦 Deployment Guide
 
-#### Render.com Configuration
+Both the frontend and backend deploy as separate Vercel projects from this same repository, using the [Vercel CLI](https://vercel.com/docs/cli).
 
-1. **Backend Service**
+1. **Backend** (`backend/` as the project root)
 
-   - Repository: Select your GitHub repository
-   - Root Directory: `/backend`
-   - Build Command: `go build -o app cmd/tripplanner/main.go`
-   - Start Command: `./app`
-   - Environment Variables:
-     - `GROQ_API_KEY`: Your Groq API key
+   ```bash
+   cd backend
+   vercel --prod
+   ```
 
-2. **Frontend Static Site**
-   - Repository: Same GitHub repository
-   - Root Directory: `/frontend`
-   - Build Command: `npm run build`
-   - Publish Directory: `dist`
-   - Environment Variables:
-     - `VITE_API_BASE_URL`: Your backend service URL
-   - Add Rewrite Rule: `/* /index.html 200`
+   - Vercel auto-detects `api/recommendations.go` as a Go serverless function.
+   - Set `GROQ_API_KEY` (and optionally `GROQ_MODEL`) under Project Settings → Environment Variables.
+   - Note: the Go builder does not respect module-relative resolution for a package literally named `internal/`; shared backend code lives under `pkg/` instead for this reason.
+
+2. **Frontend** (`frontend/` as the project root)
+
+   ```bash
+   cd frontend
+   vercel --prod
+   ```
+
+   - Set `VITE_API_BASE_URL` to the backend project's deployed URL.
+   - `vercel.json` includes a SPA rewrite so client-side routes survive a refresh.
+
+New Vercel projects have SSO deployment protection on by default; disable it (Project Settings → Deployment Protection, or `vercel project protection disable <name> --sso`) for a publicly reachable demo.
 
 ---
 
 ### 📁 Project Structure
 
 ```
-TripPlanner/
-├─ backend/                # Go API Service
+trip-planner/
+├─ backend/                 # Go API Service
+│  ├─ api/
+│  │  └─ recommendations.go # Vercel serverless entry point
 │  ├─ cmd/
-│  │  └─ tripplanner/     # Application entry point
-│  ├─ internal/           # Internal packages
-│  │  ├─ groq/           # Groq client
-│  │  ├─ recommendations/ # Recommendation logic
-│  │  └─ models/         # Data models
-│  ├─ go.mod             # Go dependencies
-│  └─ .env.example       # Environment template
+│  │  └─ tripplanner/       # Standalone server entry point (local dev)
+│  ├─ pkg/                  # Shared packages
+│  │  ├─ config/            # Environment configuration
+│  │  ├─ groq/               # Groq client
+│  │  ├─ ratelimit/          # Per-IP rate limiter
+│  │  ├─ recommendations/    # Recommendation logic
+│  │  └─ models/             # Data models
+│  ├─ go.mod                # Go dependencies
+│  ├─ vercel.json           # Function config (maxDuration)
+│  └─ .env.example           # Environment template
 │
-├─ frontend/              # React Application
+├─ frontend/                 # React Application
 │  ├─ src/
-│  │  ├─ pages/          # Route components
-│  │  ├─ components/     # Reusable UI components
-│  │  ├─ config/         # App configuration
-│  │  └─ App.tsx         # Root component
-│  ├─ public/            # Static assets
-│  ├─ vite.config.ts     # Vite configuration
-│  └─ package.json       # NPM dependencies
+│  │  ├─ pages/              # Route components
+│  │  ├─ components/         # Reusable UI components (incl. ui/ primitives)
+│  │  ├─ layouts/            # Page shells (map-first split layout)
+│  │  ├─ lib/                # Geocoding, utilities
+│  │  └─ App.tsx             # Root component
+│  ├─ public/                # Static assets
+│  ├─ vercel.json            # SPA rewrite config
+│  ├─ vite.config.ts         # Vite configuration
+│  └─ package.json           # NPM dependencies
 │
-└─ README.md             # Project documentation
+└─ README.md                 # Project documentation
 ```
 
 ---
@@ -178,8 +192,6 @@ We welcome contributions! Here's how you can help:
 - 🎨 Improve UI/UX design
 - 🤖 Enhance AI prompt engineering
 
-Please read our [Contributing Guidelines](CONTRIBUTING.md) before making a pull request.
-
 ---
 
 ### 📄 License
@@ -191,5 +203,6 @@ This project is licensed under the [MIT License](LICENSE) - see the LICENSE file
 ### 👏 Acknowledgments
 
 - [Groq](https://groq.com/) for their fast AI inference
-- [Render.com](https://render.com/) for hosting services
-- All our [contributors](https://github.com/shusingh/TripPlanner/graphs/contributors)
+- [Vercel](https://vercel.com/) for hosting services
+- [OpenFreeMap](https://openfreemap.org/) for keyless vector map tiles
+- All our [contributors](https://github.com/shusingh/trip-planner/graphs/contributors)
