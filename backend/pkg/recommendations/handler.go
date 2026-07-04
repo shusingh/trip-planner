@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/shusingh/TripPlanner/backend/internal/models"
+	"github.com/shusingh/TripPlanner/backend/pkg/models"
 )
 
 // Handler processes HTTP requests for travel recommendations.

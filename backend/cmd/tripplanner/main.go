@@ -5,9 +5,9 @@ import (
   "net/http"
 
   "github.com/joho/godotenv"
-  "github.com/shusingh/TripPlanner/backend/internal/config"
-  "github.com/shusingh/TripPlanner/backend/internal/ratelimit"
-  "github.com/shusingh/TripPlanner/backend/internal/recommendations"
+  "github.com/shusingh/TripPlanner/backend/pkg/config"
+  "github.com/shusingh/TripPlanner/backend/pkg/ratelimit"
+  "github.com/shusingh/TripPlanner/backend/pkg/recommendations"
 )
 
 // corsMiddleware adds CORS headers and handles OPTIONS preflight.

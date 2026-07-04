@@ -5,8 +5,8 @@ package handler
 import (
 	"net/http"
 
-	"github.com/shusingh/TripPlanner/backend/internal/ratelimit"
-	"github.com/shusingh/TripPlanner/backend/internal/recommendations"
+	"github.com/shusingh/TripPlanner/backend/pkg/ratelimit"
+	"github.com/shusingh/TripPlanner/backend/pkg/recommendations"
 )
 
 // corsMiddleware adds CORS headers and handles OPTIONS preflight.

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/shusingh/TripPlanner/backend/internal/groq"
-	"github.com/shusingh/TripPlanner/backend/internal/models"
+	"github.com/shusingh/TripPlanner/backend/pkg/groq"
+	"github.com/shusingh/TripPlanner/backend/pkg/models"
 )
 
 // GetRecommendations generates travel recommendations for a given destination and date range.
