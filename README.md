@@ -1,6 +1,8 @@
-# 🌍 AI Trip Planner
+# 🗺️ Michi
 
-An intelligent full-stack web application that leverages AI to create personalized travel itineraries. Simply input your destination, travel dates, and interests to receive AI-powered recommendations for attractions, restaurants, activities, and more, plotted on a live map, through the Groq API.
+**Plan calm, map-first travel itineraries with AI.**
+
+Michi is a full-stack web app that turns a destination, your travel dates, and your interests into a personalized itinerary: attractions, restaurants, and activities, plotted live on a map and generated through the Groq API.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Go](https://img.shields.io/badge/Go-1.18+-00ADD8?logo=go)](https://golang.org/doc/install)
@@ -11,8 +13,8 @@ An intelligent full-stack web application that leverages AI to create personaliz
 
 ### 🌟 Quick Links
 
-- **Live Demo:** [Atlas Trip Planner](https://atlas-trip-planner.vercel.app)
-- **API:** [atlas-trip-planner-api.vercel.app](https://atlas-trip-planner-api.vercel.app)
+- **Live Demo:** [michi-planner.vercel.app](https://michi-planner.vercel.app/)
+- **Behind the build:** [Building Michi: a map-first trip planner](https://shusingh.github.io/writing/building-michi-a-map-first-trip-planner)
 
 ---
 
@@ -82,8 +84,8 @@ An intelligent full-stack web application that leverages AI to create personaliz
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/shusingh/trip-planner.git
-   cd trip-planner
+   git clone https://github.com/shusingh/michi-planner.git
+   cd michi-planner
    ```
 
 2. **Backend Setup**
@@ -149,7 +151,7 @@ New Vercel projects have SSO deployment protection on by default; disable it (Pr
 ### 📁 Project Structure
 
 ```
-trip-planner/
+michi-planner/
 ├─ backend/                 # Go API Service
 │  ├─ api/
 │  │  └─ recommendations.go # Vercel serverless entry point
@@ -205,4 +207,4 @@ This project is licensed under the [MIT License](LICENSE) - see the LICENSE file
 - [Groq](https://groq.com/) for their fast AI inference
 - [Vercel](https://vercel.com/) for hosting services
 - [OpenFreeMap](https://openfreemap.org/) for keyless vector map tiles
-- All our [contributors](https://github.com/shusingh/trip-planner/graphs/contributors)
+- All our [contributors](https://github.com/shusingh/michi-planner/graphs/contributors)
